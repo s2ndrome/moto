@@ -5,13 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RIDER CARD</title>
 <style id="cardStyle">
-  .ninecard {
-    background: linear-gradient(45deg, var(--point-color) 25%, transparent 25%, transparent 75%, var(--point-color) 75%, var(--point-color)),
-                linear-gradient(45deg, var(--point-color) 25%, #fff 25%, #fff 75%, var(--point-color) 75%, var(--point-color));
+  .ninecard { padding: 12px; box-sizing: border-box; }
+  .ninecard[data-bg-type="checker"] {
+    --bg-color: var(--point-color);
+    background: linear-gradient(45deg, var(--bg-color) 25%, transparent 25%, transparent 75%, var(--bg-color) 75%, var(--bg-color)),
+                linear-gradient(45deg, var(--bg-color) 25%, #fff 25%, #fff 75%, var(--bg-color) 75%, var(--bg-color));
     background-size: 22px 22px;
     background-position: 0 0, 11px 11px;
-    padding: 12px;
-    box-sizing: border-box;
+  }
+  .ninecard[data-bg-type="gradient"] {
+    --bg-color-1: var(--point-color);
+    --bg-color-2: #4b5563;
+    background: linear-gradient(135deg, var(--bg-color-1), var(--bg-color-2));
+  }
+  .ninecard[data-bg-type="image"] {
+    background-color: #e5e7eb;
+    background-image: var(--bg-image, none);
+    background-size: cover;
+    background-position: center;
   }
   .ninecard-inner { background: #fff; position: relative; overflow: hidden; padding: 14px; box-sizing: border-box; }
   .ninecard-watermark {
@@ -114,6 +125,8 @@
   .img-panel-row { margin-bottom: 10px; }
   .img-panel-row label { display: block; font-size: 11px; color: #666; margin-bottom: 4px; }
   .img-panel-row input[type="text"] { width: 100%; padding: 8px 10px; font-size: 13px; border: 1px solid #ccc; border-radius: 6px; }
+  .img-panel-row select { width: 100%; padding: 8px 10px; font-size: 13px; border: 1px solid #ccc; border-radius: 6px; background: #fff; color: #222; }
+  .img-panel-row input[type="color"] { width: 40px; height: 30px; border: 1px solid #ccc; border-radius: 6px; padding: 0; background: none; cursor: pointer; }
   .img-panel-row input[type="range"] { width: 100%; }
   .img-panel-row .range-val { font-size: 11px; color: #888; }
   .img-panel-row input[type="file"] { font-size: 12px; }
@@ -131,6 +144,7 @@
     .img-panel-head span { color: #eee; }
     .img-panel-row label { color: #aaa; }
     .img-panel-row input[type="text"] { background: #1c1c1e; border-color: #444; color: #eee; }
+    .img-panel-row select { background: #1c1c1e; border-color: #444; color: #eee; }
   }
 </style>
 </head>
@@ -153,6 +167,7 @@
 <div class="app-bar">
   <span class="app-title">RIDER CARD</span>
   <label>포인트 색상 <input type="color" id="pointColorInput" value="#111111"></label>
+  <button type="button" id="bgOpenBtn">배경</button>
   <button type="button" id="copyBtn">HTML 복사</button>
   <button type="button" id="saveImageBtn">이미지 저장</button>
   <button type="button" id="resetBtn">초기화</button>
@@ -162,7 +177,7 @@
 
 <div class="stage">
   <div class="card-outer">
-    <div class="ninecard" id="card">
+    <div class="ninecard" id="card" data-bg-type="checker">
       <div class="ninecard-inner">
         <div class="ninecard-watermark" contenteditable="true" data-placeholder="워터마크"></div>
 
@@ -280,11 +295,44 @@
   </div>
 </div>
 
+<!-- 배경 설정 패널 -->
+<div class="img-panel" id="bgPanel">
+  <div class="img-panel-head">
+    <span>배경 설정</span>
+    <button type="button" id="bgPanelClose" aria-label="닫기">✕</button>
+  </div>
+  <div class="img-panel-row">
+    <label>배경 종류</label>
+    <select id="bgTypeSelect">
+      <option value="checker">체크무늬 (기본)</option>
+      <option value="gradient">그라데이션</option>
+      <option value="image">이미지</option>
+    </select>
+  </div>
+  <div class="img-panel-row" id="bgCheckerRow">
+    <label>무늬 색상</label>
+    <input type="color" id="bgCheckerColorInput" value="#111111">
+  </div>
+  <div class="img-panel-row" id="bgGradientRow" hidden>
+    <label>색상 1</label>
+    <input type="color" id="bgGradientColor1Input" value="#111111">
+    <label style="margin-top: 8px;">색상 2</label>
+    <input type="color" id="bgGradientColor2Input" value="#4b5563">
+  </div>
+  <div class="img-panel-row" id="bgImageRow" hidden>
+    <label>이미지 주소 (URL)</label>
+    <input type="text" id="bgImageUrlInput" placeholder="https://...">
+    <label style="margin-top: 8px;">또는 내 사진 올리기</label>
+    <input type="file" id="bgImageFileInput" accept="image/*">
+  </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 (function () {
   var CARD_KEY = 'ridercard:html:v1';
   var POINT_KEY = 'ridercard:point:v1';
+  var BG_KEY = 'ridercard:bg:v1';
 
   var card = document.getElementById('card');
   var pointInput = document.getElementById('pointColorInput');
@@ -303,6 +351,21 @@
   var widthVal = document.getElementById('widthVal');
   var rotateRange = document.getElementById('rotateRange');
   var rotateVal = document.getElementById('rotateVal');
+
+  var bgOpenBtn = document.getElementById('bgOpenBtn');
+  var bgPanel = document.getElementById('bgPanel');
+  var bgPanelClose = document.getElementById('bgPanelClose');
+  var bgTypeSelect = document.getElementById('bgTypeSelect');
+  var bgCheckerRow = document.getElementById('bgCheckerRow');
+  var bgGradientRow = document.getElementById('bgGradientRow');
+  var bgImageRow = document.getElementById('bgImageRow');
+  var bgCheckerColorInput = document.getElementById('bgCheckerColorInput');
+  var bgGradientColor1Input = document.getElementById('bgGradientColor1Input');
+  var bgGradientColor2Input = document.getElementById('bgGradientColor2Input');
+  var bgImageUrlInput = document.getElementById('bgImageUrlInput');
+  var bgImageFileInput = document.getElementById('bgImageFileInput');
+
+  var bgState = { type: 'checker', checkerColor: '#111111', gradient1: '#111111', gradient2: '#4b5563', image: '' };
 
   var activeImg = null;
   var BLANK_MAIN = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSczMDAnIGhlaWdodD0nNDAwJz48cmVjdCB3aWR0aD0nMTAwJScgaGVpZ2h0PScxMDAlJyBmaWxsPScjZTVlN2ViJy8+PHRleHQgeD0nNTAlJyB5PSc0NiUnIGZvbnQtZmFtaWx5PSdzYW5zLXNlcmlmJyBmb250LXNpemU9JzQ4JyBmaWxsPScjYTNhM2EzJyB0ZXh0LWFuY2hvcj0nbWlkZGxlJz4rPC90ZXh0Pjx0ZXh0IHg9JzUwJScgeT0nNTglJyBmb250LWZhbWlseT0nc2Fucy1zZXJpZicgZm9udC1zaXplPScxNScgZmlsbD0nI2EzYTNhMycgdGV4dC1hbmNob3I9J21pZGRsZSc+7IKs7KeE7J2EIO2BtOumre2VtOyEnCDstpTqsIDtlZjshLjsmpQ8L3RleHQ+PC9zdmc+';
@@ -334,6 +397,11 @@
       if (savedPoint) {
         document.documentElement.style.setProperty('--point-color', savedPoint);
         pointInput.value = savedPoint;
+      }
+      var savedBg = localStorage.getItem(BG_KEY);
+      if (savedBg) {
+        var parsed = JSON.parse(savedBg);
+        for (var k in bgState) if (parsed[k] !== undefined) bgState[k] = parsed[k];
       }
     } catch (e) {}
   }
@@ -368,6 +436,83 @@
     flashSaved();
   });
 
+  /* ---------- 배경 설정 ---------- */
+  function applyBg() {
+    card.setAttribute('data-bg-type', bgState.type);
+    card.style.setProperty('--bg-color', bgState.checkerColor);
+    card.style.setProperty('--bg-color-1', bgState.gradient1);
+    card.style.setProperty('--bg-color-2', bgState.gradient2);
+    card.style.setProperty('--bg-image', bgState.image ? "url('" + bgState.image.replace(/'/g, "\\'") + "')" : 'none');
+  }
+
+  function saveBgState() {
+    try { localStorage.setItem(BG_KEY, JSON.stringify(bgState)); } catch (e) {}
+    flashSaved();
+  }
+
+  function syncBgPanelInputs() {
+    bgTypeSelect.value = bgState.type;
+    bgCheckerRow.hidden = bgState.type !== 'checker';
+    bgGradientRow.hidden = bgState.type !== 'gradient';
+    bgImageRow.hidden = bgState.type !== 'image';
+    bgCheckerColorInput.value = bgState.checkerColor;
+    bgGradientColor1Input.value = bgState.gradient1;
+    bgGradientColor2Input.value = bgState.gradient2;
+    bgImageUrlInput.value = bgState.image;
+  }
+
+  function openBgPanel() {
+    closePanel();
+    syncBgPanelInputs();
+    bgPanel.classList.add('open');
+  }
+  function closeBgPanel() { bgPanel.classList.remove('open'); }
+
+  bgOpenBtn.addEventListener('click', openBgPanel);
+  bgPanelClose.addEventListener('click', closeBgPanel);
+
+  bgTypeSelect.addEventListener('change', function () {
+    bgState.type = bgTypeSelect.value;
+    syncBgPanelInputs();
+    applyBg();
+    saveBgState();
+  });
+
+  bgCheckerColorInput.addEventListener('input', function () {
+    bgState.checkerColor = bgCheckerColorInput.value;
+    applyBg();
+    saveBgState();
+  });
+
+  bgGradientColor1Input.addEventListener('input', function () {
+    bgState.gradient1 = bgGradientColor1Input.value;
+    applyBg();
+    saveBgState();
+  });
+
+  bgGradientColor2Input.addEventListener('input', function () {
+    bgState.gradient2 = bgGradientColor2Input.value;
+    applyBg();
+    saveBgState();
+  });
+
+  bgImageUrlInput.addEventListener('input', function () {
+    bgState.image = bgImageUrlInput.value.trim();
+    applyBg();
+    saveBgState();
+  });
+
+  bgImageFileInput.addEventListener('change', function () {
+    if (!bgImageFileInput.files || !bgImageFileInput.files[0]) return;
+    fileToDataUrl(bgImageFileInput.files[0], function (dataUrl) {
+      bgState.image = dataUrl;
+      bgImageUrlInput.value = '';
+      bgImageUrlInput.placeholder = '(업로드된 이미지 사용 중) 새 주소를 입력하면 교체됩니다';
+      applyBg();
+      saveBgState();
+    });
+  });
+
   /* ---------- 이미지 클릭 -> 편집 패널 ---------- */
   function fileToDataUrl(file, cb) {
     var reader = new FileReader();
@@ -376,11 +521,15 @@
   }
 
   function openPanelFor(img) {
+    closeBgPanel();
     activeImg = img;
     var isSticker = img.dataset.img === 'sticker';
+    var src = img.getAttribute('src') || '';
+    var isBlank = src === BLANK_MAIN || src === BLANK_STICKER;
+    var isUploaded = !isBlank && src.indexOf('data:') === 0;
     panelTitle.textContent = isSticker ? '스티커 편집' : '메인 사진 편집';
-    urlInput.value = img.getAttribute('src') && img.getAttribute('src').indexOf('data:') === 0 ? '' : img.getAttribute('src');
-    urlInput.placeholder = img.getAttribute('src') && img.getAttribute('src').indexOf('data:') === 0
+    urlInput.value = (isBlank || isUploaded) ? '' : src;
+    urlInput.placeholder = isUploaded
       ? '(업로드된 이미지 사용 중) 새 주소를 입력하면 교체됩니다'
       : 'https://...';
     fileInput.value = '';
@@ -610,6 +759,7 @@
     try {
       localStorage.removeItem(CARD_KEY);
       localStorage.removeItem(POINT_KEY);
+      localStorage.removeItem(BG_KEY);
     } catch (e) {}
     location.reload();
   });
@@ -619,6 +769,7 @@
   wireEditableText();
   wireImages();
   wireCellColorPickers();
+  applyBg();
 })();
 </script>
 </body>
