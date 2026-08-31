@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NINE · Nick Blackwood</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 24px 12px; background: #ececec; font-family: -apple-system, "Noto Sans KR", sans-serif; display: flex; justify-content: center; }
+
+  .card-outer { width: 100%; max-width: 420px; }
+
+  /* ============================================================
+     이 <style> 블록만 보면 됩니다.
+     - 사진 주소는 아래 본문 HTML의 img src를 바꾸세요.
+     - 스티커 4장의 위치/크기/회전은 각 img의 style="" 안
+       top / left / right / bottom / width / rotate 숫자를 바꾸세요.
+       (top·bottom 중 하나만, left·right 중 하나만 쓰면 됩니다)
+     ============================================================ */
+
+  .ninecard {
+    background: linear-gradient(45deg, #111 25%, transparent 25%, transparent 75%, #111 75%, #111),
+                linear-gradient(45deg, #111 25%, #fff 25%, #fff 75%, #111 75%, #111);
+    background-size: 22px 22px;
+    background-position: 0 0, 11px 11px;
+    padding: 12px;
+    box-sizing: border-box;
+  }
+  .ninecard-inner { background: #fff; position: relative; overflow: hidden; padding: 14px; box-sizing: border-box; }
+  .ninecard-watermark {
+    position: absolute; top: 48px; right: 18px; font-size: 48px; font-weight: 900;
+    letter-spacing: .08em; color: #111; opacity: .05; line-height: 1; z-index: 0;
+  }
+  .ninecard-content { position: relative; z-index: 2; }
+
+  /* ---- 사진 + 스티커 영역 ---- */
+  .ninecard-photowrap { position: relative; width: 100%; background: #fff; box-sizing: border-box; margin-bottom: 18px; padding: 4px 4px 8px; overflow: visible; }
+  .ninecard-sticker { position: absolute; height: auto; object-fit: contain; border: 0; z-index: 8; filter: drop-shadow(0 6px 10px rgba(0,0,0,.2)); }
+  .ninecard-frame {
+    width: 100%; background: #fff; border: 1px solid #111; padding: 10px 10px 16px; box-sizing: border-box;
+    box-shadow: 6px 6px 0 rgba(17,17,17,.12); position: relative; z-index: 4;
+  }
+  .ninecard-photo { width: 100%; aspect-ratio: 3/4; background: #e5e7eb; border: 1px solid #111; overflow: hidden; position: relative; box-sizing: border-box; }
+  .ninecard-photo img { display: block; width: 100%; height: 100%; object-fit: cover; border: 0; }
+  .ninecard-photo-shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(17,17,17,.10) 55%, rgba(17,17,17,.72) 100%); }
+  .ninecard-photo-label { position: absolute; left: 16px; bottom: 16px; font-size: 44px; font-weight: 900; letter-spacing: .12em; color: #fff; line-height: 1; }
+  .ninecard-namebox { margin-top: 14px; text-align: center; }
+  .ninecard-namebox .name { font-size: 20px; font-weight: 900; letter-spacing: .08em; color: #111; }
+  .ninecard-namebox .role { margin-top: 4px; font-size: 12px; line-height: 1.6; color: #4b5563; }
+
+  /* ---- 2x2 정보 그리드 ---- */
+  .ninecard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 16px; color: #222; }
+  .ninecard-grid .box { padding: 12px 10px; box-sizing: border-box; min-height: 74px; display: flex; flex-direction: column; justify-content: center; }
+  .ninecard-grid .box .label { font-size: 9px; font-weight: 900; letter-spacing: .16em; margin-bottom: 6px; }
+  .ninecard-grid .box .value { font-size: 15px; font-weight: 900; line-height: 1.35; }
+  .ninecard-grid .box.dark { background: #111; }
+  .ninecard-grid .box.dark .label { color: #d1d5db; }
+  .ninecard-grid .box.dark .value { color: #fff; }
+  .ninecard-grid .box.light { background: #f3f4f6; border-left: 5px solid #111; }
+  .ninecard-grid .box.light .label { color: #6b7280; }
+  .ninecard-grid .box.light .value { color: #111; }
+
+  /* ---- 외형 / 성격 섹션 ---- */
+  .ninecard-section { background: #fff; border: 1px solid #111; padding: 14px 13px; margin-bottom: 10px; box-sizing: border-box; box-shadow: 4px 4px 0 rgba(17,17,17,.10); }
+  .ninecard-section .title { font-size: 12px; font-weight: 900; letter-spacing: .08em; margin-bottom: 6px; color: #111; }
+  .ninecard-section .body { font-size: 13px; line-height: 1.75; color: #222; }
+  .ninecard-section .divider { height: 1px; border-top: 1px dashed #d4d4d8; margin: 10px 0; }
+
+  /* ---- OFF TRACK 섹션 ---- */
+  .ninecard-offtrack .title { margin-bottom: 9px; }
+  .ninecard-offtrack .row { border-top: 1px dashed #d4d4d8; padding: 8px 0; font-size: 12px; line-height: 1.7; color: #222; }
+  .ninecard-offtrack .row:last-child { border-bottom: 1px dashed #d4d4d8; }
+  .ninecard-offtrack .row .key { font-weight: 900; letter-spacing: .08em; margin-right: 6px; }
+</style>
+</head>
+<body>
+<div class="card-outer">
+  <div class="ninecard">
+    <div class="ninecard-inner">
+      <div class="ninecard-watermark">NINE</div>
+
+      <div class="ninecard-content">
+
+        <!-- ============================================================
+             사진 + 스티커
+             - 메인 사진: 아래 .ninecard-photo 안의 img src를 바꾸세요.
+             - 스티커 4장: 각 img의 src로 사진을 바꾸고,
+               style="" 안의 top/left/right/bottom 숫자(px)로 위치를,
+               rotate(각도deg)로 회전을, width로 크기를 조절하세요.
+               (top/bottom, left/right는 각각 하나씩만 쓰면 됩니다)
+             ============================================================ -->
+        <div class="ninecard-photowrap">
+
+          <!-- 스티커 1 : 왼쪽 위 -->
+          <img class="ninecard-sticker" src="https://i.postimg.cc/1txGGr00/IMG-2830.png"
+               style="top: -18px; left: -8px; width: clamp(74px, 22vw, 118px); transform: rotate(-12deg);">
+
+          <!-- 스티커 2 : 오른쪽 위 -->
+          <img class="ninecard-sticker" src="https://i.postimg.cc/y8Fr3WCP/IMG-2822.png"
+               style="top: -16px; right: -6px; width: clamp(66px, 20vw, 104px); transform: rotate(10deg);">
+
+          <div class="ninecard-frame">
+            <div class="ninecard-photo">
+              <!-- 메인 프로필 사진 -->
+              <img src="https://i.postimg.cc/JzNtHdSY/IMG-2783.jpg">
+              <div class="ninecard-photo-shade"></div>
+              <!-- 사진 위에 표시되는 큰 글자 -->
+              <div class="ninecard-photo-label">NINE</div>
+            </div>
+
+            <div class="ninecard-namebox">
+              <!-- 이름 -->
+              <div class="name">Nick Blackwood</div>
+              <!-- 한 줄 소개 -->
+              <div class="role">Raven Factory No.9 Rider</div>
+            </div>
+          </div>
+
+          <!-- 스티커 3 : 왼쪽 아래 -->
+          <img class="ninecard-sticker" src="https://i.postimg.cc/fL4ccf78/IMG-2827.png"
+               style="bottom: -15px; left: -15px; width: clamp(83px, 23vw, 120px); transform: rotate(18deg);">
+
+          <!-- 스티커 4 : 오른쪽 아래 -->
+          <img class="ninecard-sticker" src="https://i.postimg.cc/prSXjq8S/IMG-2834.png"
+               style="bottom: -14px; right: -6px; width: 55px; transform: rotate(-9deg);">
+
+        </div>
+
+        <!-- ============================================================
+             기본 정보 2x2
+             ============================================================ -->
+        <div class="ninecard-grid">
+          <div class="box dark">
+            <div class="label">NAME</div>
+            <div class="value">닉 블랙우드</div>
+          </div>
+          <div class="box light">
+            <div class="label">NICKNAME</div>
+            <div class="value">나인</div>
+          </div>
+          <div class="box light">
+            <div class="label">BASIC</div>
+            <div class="value">영국 · 24세 · 183cm</div>
+          </div>
+          <div class="box dark">
+            <div class="label">TEAM</div>
+            <div class="value">레이븐 No.9</div>
+          </div>
+        </div>
+
+        <!-- ============================================================
+             외형
+             ============================================================ -->
+        <div class="ninecard-section">
+          <div class="title">[외형]</div>
+          <div class="body">
+            칠흑 같은 머리와 푸른빛이 도는 짙은 눈동자. 300km가 넘는 속도의 바람을 정면으로 버텨내기 위해 단련된 탄탄한 몸.
+            <b>왼쪽 뺨에 깊게 패이는 보조개.</b>
+            낡은 가죽재킷, 오버사이즈 후드, 찢어진 블랙진, 워싱 데님, 부츠 같은 <b>거친 바이커 무드</b>를 즐겨 입는다.
+          </div>
+        </div>
+
+        <!-- ============================================================
+             성격
+             ============================================================ -->
+        <div class="ninecard-section">
+          <div class="title">[성격]</div>
+          <div class="body">
+            보통 제멋대로이며, 의미 없다고 느끼는 일에는 에너지를 거의 쓰지 않는다. 쉬운 승리와 예측 가능한 상황을 싫어하며 기본적으로 세상만사에 지독한 권태를 느끼고 있다.
+            <div class="divider"></div>
+            <b>낮고 깊은 목소리.</b> 거리낌이 없는 말투. 흥미가 생기면 상대의 말을 물고 늘어지며 질문과 놀림을 연달아 던진다. 무례한 농담은 상대의 반응을 구경하기위에 툭 던지는 쪽에 가깝다.
+          </div>
+        </div>
+
+        <!-- ============================================================
+             OFF TRACK
+             ============================================================ -->
+        <div class="ninecard-section ninecard-offtrack">
+          <div class="title">[OFF TRACK]</div>
+          <div class="body">
+            <div class="row"><span class="key">SCENT</span>Byredo Black Saffron.</div>
+            <div class="row"><span class="key">BIKE</span>Bimota custom. 차보다 자주 타는 개인 바이크.</div>
+            <div class="row"><span class="key">LIKE</span>단 것 · 밤 라이딩 · 의외의 반응.</div>
+            <div class="row"><span class="key">DISLIKE</span>쉬운 승리 · 잔소리</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
