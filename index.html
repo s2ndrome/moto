@@ -4,23 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NINE · Nick Blackwood</title>
-<style>
-  * { box-sizing: border-box; }
-  body { margin: 0; padding: 24px 12px; background: #ececec; font-family: -apple-system, "Noto Sans KR", sans-serif; display: flex; justify-content: center; }
-
-  .card-outer { width: 100%; max-width: 420px; }
-
-  /* ============================================================
-     이 <style> 블록만 보면 됩니다.
-     - 사진 주소는 아래 본문 HTML의 img src를 바꾸세요.
-     - 스티커 4장의 위치/크기/회전은 각 img의 style="" 안
-       top / left / right / bottom / width / rotate 숫자를 바꾸세요.
-       (top·bottom 중 하나만, left·right 중 하나만 쓰면 됩니다)
-     ============================================================ */
-
+<style id="cardStyle">
   .ninecard {
-    background: linear-gradient(45deg, #111 25%, transparent 25%, transparent 75%, #111 75%, #111),
-                linear-gradient(45deg, #111 25%, #fff 25%, #fff 75%, #111 75%, #111);
+    background: linear-gradient(45deg, var(--point-color) 25%, transparent 25%, transparent 75%, var(--point-color) 75%, var(--point-color)),
+                linear-gradient(45deg, var(--point-color) 25%, #fff 25%, #fff 75%, var(--point-color) 75%, var(--point-color));
     background-size: 22px 22px;
     background-position: 0 0, 11px 11px;
     padding: 12px;
@@ -29,165 +16,506 @@
   .ninecard-inner { background: #fff; position: relative; overflow: hidden; padding: 14px; box-sizing: border-box; }
   .ninecard-watermark {
     position: absolute; top: 48px; right: 18px; font-size: 48px; font-weight: 900;
-    letter-spacing: .08em; color: #111; opacity: .05; line-height: 1; z-index: 0;
+    letter-spacing: .08em; color: var(--point-color); opacity: .05; line-height: 1; z-index: 0;
   }
   .ninecard-content { position: relative; z-index: 2; }
 
-  /* ---- 사진 + 스티커 영역 ---- */
   .ninecard-photowrap { position: relative; width: 100%; background: #fff; box-sizing: border-box; margin-bottom: 18px; padding: 4px 4px 8px; overflow: visible; }
-  .ninecard-sticker { position: absolute; height: auto; object-fit: contain; border: 0; z-index: 8; filter: drop-shadow(0 6px 10px rgba(0,0,0,.2)); }
+  .ninecard-sticker { position: absolute; height: auto; object-fit: contain; border: 0; z-index: 8; filter: drop-shadow(0 6px 10px rgba(0,0,0,.2)); touch-action: none; }
   .ninecard-frame {
-    width: 100%; background: #fff; border: 1px solid #111; padding: 10px 10px 16px; box-sizing: border-box;
+    width: 100%; background: #fff; border: 1px solid var(--point-color); padding: 10px 10px 16px; box-sizing: border-box;
     box-shadow: 6px 6px 0 rgba(17,17,17,.12); position: relative; z-index: 4;
   }
-  .ninecard-photo { width: 100%; aspect-ratio: 3/4; background: #e5e7eb; border: 1px solid #111; overflow: hidden; position: relative; box-sizing: border-box; }
+  .ninecard-photo { width: 100%; aspect-ratio: 3/4; background: #e5e7eb; border: 1px solid var(--point-color); overflow: hidden; position: relative; box-sizing: border-box; }
   .ninecard-photo img { display: block; width: 100%; height: 100%; object-fit: cover; border: 0; }
-  .ninecard-photo-shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(17,17,17,.10) 55%, rgba(17,17,17,.72) 100%); }
+  .ninecard-photo-shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(17,17,17,.10) 55%, rgba(17,17,17,.72) 100%); pointer-events: none; }
   .ninecard-photo-label { position: absolute; left: 16px; bottom: 16px; font-size: 44px; font-weight: 900; letter-spacing: .12em; color: #fff; line-height: 1; }
   .ninecard-namebox { margin-top: 14px; text-align: center; }
-  .ninecard-namebox .name { font-size: 20px; font-weight: 900; letter-spacing: .08em; color: #111; }
+  .ninecard-namebox .name { font-size: 20px; font-weight: 900; letter-spacing: .08em; color: var(--point-color); }
   .ninecard-namebox .role { margin-top: 4px; font-size: 12px; line-height: 1.6; color: #4b5563; }
 
-  /* ---- 2x2 정보 그리드 ---- */
   .ninecard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 16px; color: #222; }
   .ninecard-grid .box { padding: 12px 10px; box-sizing: border-box; min-height: 74px; display: flex; flex-direction: column; justify-content: center; }
   .ninecard-grid .box .label { font-size: 9px; font-weight: 900; letter-spacing: .16em; margin-bottom: 6px; }
   .ninecard-grid .box .value { font-size: 15px; font-weight: 900; line-height: 1.35; }
-  .ninecard-grid .box.dark { background: #111; }
+  .ninecard-grid .box.dark { background: var(--point-color); }
   .ninecard-grid .box.dark .label { color: #d1d5db; }
   .ninecard-grid .box.dark .value { color: #fff; }
-  .ninecard-grid .box.light { background: #f3f4f6; border-left: 5px solid #111; }
+  .ninecard-grid .box.light { background: #f3f4f6; border-left: 5px solid var(--point-color); }
   .ninecard-grid .box.light .label { color: #6b7280; }
-  .ninecard-grid .box.light .value { color: #111; }
+  .ninecard-grid .box.light .value { color: var(--point-color); }
 
-  /* ---- 외형 / 성격 섹션 ---- */
-  .ninecard-section { background: #fff; border: 1px solid #111; padding: 14px 13px; margin-bottom: 10px; box-sizing: border-box; box-shadow: 4px 4px 0 rgba(17,17,17,.10); }
-  .ninecard-section .title { font-size: 12px; font-weight: 900; letter-spacing: .08em; margin-bottom: 6px; color: #111; }
+  .ninecard-section { background: #fff; border: 1px solid var(--point-color); padding: 14px 13px; margin-bottom: 10px; box-sizing: border-box; box-shadow: 4px 4px 0 rgba(17,17,17,.10); }
+  .ninecard-section .title { font-size: 12px; font-weight: 900; letter-spacing: .08em; margin-bottom: 6px; color: var(--point-color); }
   .ninecard-section .body { font-size: 13px; line-height: 1.75; color: #222; }
   .ninecard-section .divider { height: 1px; border-top: 1px dashed #d4d4d8; margin: 10px 0; }
 
-  /* ---- OFF TRACK 섹션 ---- */
   .ninecard-offtrack .title { margin-bottom: 9px; }
   .ninecard-offtrack .row { border-top: 1px dashed #d4d4d8; padding: 8px 0; font-size: 12px; line-height: 1.7; color: #222; }
   .ninecard-offtrack .row:last-child { border-bottom: 1px dashed #d4d4d8; }
   .ninecard-offtrack .row .key { font-weight: 900; letter-spacing: .08em; margin-right: 6px; }
 </style>
+<style>
+  :root { --point-color: #111111; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #ececec; font-family: -apple-system, "Noto Sans KR", sans-serif; }
+
+  .app-bar {
+    position: sticky; top: 0; z-index: 50; display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; background: rgba(255,255,255,.9); backdrop-filter: blur(6px);
+    border-bottom: 1px solid #ddd; flex-wrap: wrap;
+  }
+  .app-bar .app-title { font-weight: 900; font-size: 13px; letter-spacing: .06em; color: #111; margin-right: auto; }
+  .app-bar label { font-size: 12px; color: #444; display: flex; align-items: center; gap: 6px; }
+  .app-bar input[type="color"] { width: 30px; height: 30px; border: 1px solid #ccc; border-radius: 6px; padding: 0; background: none; cursor: pointer; }
+  .app-bar button {
+    font-size: 12px; font-weight: 700; padding: 7px 12px; border-radius: 6px; border: 1px solid #ccc;
+    background: #fff; color: #222; cursor: pointer;
+  }
+  .app-bar button:hover { background: #f2f2f2; }
+  .app-bar .save-status { font-size: 11px; color: #16a34a; opacity: 0; transition: opacity .3s; }
+  .app-bar .save-status.show { opacity: 1; }
+  .app-hint { max-width: 420px; margin: 10px auto 0; padding: 0 12px; font-size: 12px; line-height: 1.6; color: #666; text-align: center; }
+
+  .stage { display: flex; justify-content: center; padding: 16px 12px 80px; }
+  .card-outer { width: 100%; max-width: 420px; }
+
+  /* ---- 편집 가능 요소 표시 ---- */
+  [contenteditable="true"] { outline: none; border-radius: 3px; cursor: text; }
+  [contenteditable="true"]:hover { box-shadow: 0 0 0 2px rgba(59,130,246,.35); }
+  [contenteditable="true"]:focus { box-shadow: 0 0 0 2px #3b82f6; background: rgba(59,130,246,.06); }
+
+  .ninecard-photo img, .ninecard-sticker { cursor: pointer; }
+  .ninecard-sticker:hover { outline: 2px dashed rgba(59,130,246,.6); outline-offset: 2px; }
+  .ninecard-sticker.dragging { outline: 2px solid #3b82f6; cursor: grabbing; opacity: .9; }
+
+  /* ---- 하단 이미지 편집 패널 ---- */
+  .img-panel {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 100;
+    background: #fff; border-top: 1px solid #ddd; box-shadow: 0 -6px 20px rgba(0,0,0,.12);
+    padding: 14px 16px 18px; transform: translateY(110%); transition: transform .25s ease;
+    max-height: 60vh; overflow-y: auto;
+  }
+  .img-panel.open { transform: translateY(0); }
+  .img-panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .img-panel-head span { font-size: 13px; font-weight: 800; color: #111; }
+  .img-panel-head button { border: none; background: none; font-size: 18px; line-height: 1; cursor: pointer; color: #888; }
+  .img-panel-row { margin-bottom: 10px; }
+  .img-panel-row label { display: block; font-size: 11px; color: #666; margin-bottom: 4px; }
+  .img-panel-row input[type="text"] { width: 100%; padding: 8px 10px; font-size: 13px; border: 1px solid #ccc; border-radius: 6px; }
+  .img-panel-row input[type="range"] { width: 100%; }
+  .img-panel-row .range-val { font-size: 11px; color: #888; }
+  .img-panel-row input[type="file"] { font-size: 12px; }
+  .img-panel-drag-hint { font-size: 11px; color: #999; margin-top: -2px; margin-bottom: 10px; }
+
+  @media (prefers-color-scheme: dark) {
+    html, body { background: #1c1c1e; }
+    .app-bar { background: rgba(30,30,32,.9); border-bottom-color: #333; }
+    .app-bar .app-title { color: #eee; }
+    .app-bar label { color: #ccc; }
+    .app-bar button { background: #2a2a2c; color: #eee; border-color: #444; }
+    .app-bar button:hover { background: #333; }
+    .app-hint { color: #999; }
+    .img-panel { background: #2a2a2c; border-top-color: #444; }
+    .img-panel-head span { color: #eee; }
+    .img-panel-row label { color: #aaa; }
+    .img-panel-row input[type="text"] { background: #1c1c1e; border-color: #444; color: #eee; }
+  }
+</style>
 </head>
 <body>
-<div class="card-outer">
-  <div class="ninecard">
-    <div class="ninecard-inner">
-      <div class="ninecard-watermark">NINE</div>
 
-      <div class="ninecard-content">
+<div class="app-bar">
+  <span class="app-title">NINE 카드 생성기</span>
+  <label>포인트 색상 <input type="color" id="pointColorInput" value="#111111"></label>
+  <button type="button" id="copyBtn">HTML 복사</button>
+  <button type="button" id="resetBtn">초기화</button>
+  <span class="save-status" id="saveStatus">저장됨</span>
+</div>
+<p class="app-hint">글자는 클릭해서 바로 수정하세요. 사진을 클릭하면 이미지를 바꿀 수 있고, 스티커는 드래그해서 위치를 옮길 수 있어요. 수정 내용은 이 브라우저에 자동 저장됩니다.</p>
 
-        <!-- ============================================================
-             사진 + 스티커
-             - 메인 사진: 아래 .ninecard-photo 안의 img src를 바꾸세요.
-             - 스티커 4장: 각 img의 src로 사진을 바꾸고,
-               style="" 안의 top/left/right/bottom 숫자(px)로 위치를,
-               rotate(각도deg)로 회전을, width로 크기를 조절하세요.
-               (top/bottom, left/right는 각각 하나씩만 쓰면 됩니다)
-             ============================================================ -->
-        <div class="ninecard-photowrap">
+<div class="stage">
+  <div class="card-outer">
+    <div class="ninecard" id="card">
+      <div class="ninecard-inner">
+        <div class="ninecard-watermark" contenteditable="true">NINE</div>
 
-          <!-- 스티커 1 : 왼쪽 위 -->
-          <img class="ninecard-sticker" src="https://i.postimg.cc/1txGGr00/IMG-2830.png"
-               style="top: -18px; left: -8px; width: clamp(74px, 22vw, 118px); transform: rotate(-12deg);">
+        <div class="ninecard-content">
 
-          <!-- 스티커 2 : 오른쪽 위 -->
-          <img class="ninecard-sticker" src="https://i.postimg.cc/y8Fr3WCP/IMG-2822.png"
-               style="top: -16px; right: -6px; width: clamp(66px, 20vw, 104px); transform: rotate(10deg);">
+          <div class="ninecard-photowrap">
 
-          <div class="ninecard-frame">
-            <div class="ninecard-photo">
-              <!-- 메인 프로필 사진 -->
-              <img src="https://i.postimg.cc/JzNtHdSY/IMG-2783.jpg">
-              <div class="ninecard-photo-shade"></div>
-              <!-- 사진 위에 표시되는 큰 글자 -->
-              <div class="ninecard-photo-label">NINE</div>
+            <img class="ninecard-sticker" data-anchor="top left" data-img="sticker"
+                 src="https://i.postimg.cc/1txGGr00/IMG-2830.png"
+                 style="top: -18px; left: -8px; width: 96px; transform: rotate(-12deg);">
+
+            <img class="ninecard-sticker" data-anchor="top right" data-img="sticker"
+                 src="https://i.postimg.cc/y8Fr3WCP/IMG-2822.png"
+                 style="top: -16px; right: -6px; width: 84px; transform: rotate(10deg);">
+
+            <div class="ninecard-frame">
+              <div class="ninecard-photo">
+                <img data-img="main" src="https://i.postimg.cc/JzNtHdSY/IMG-2783.jpg">
+                <div class="ninecard-photo-shade"></div>
+                <div class="ninecard-photo-label" contenteditable="true">NINE</div>
+              </div>
+
+              <div class="ninecard-namebox">
+                <div class="name" contenteditable="true">Nick Blackwood</div>
+                <div class="role" contenteditable="true">Raven Factory No.9 Rider</div>
+              </div>
             </div>
 
-            <div class="ninecard-namebox">
-              <!-- 이름 -->
-              <div class="name">Nick Blackwood</div>
-              <!-- 한 줄 소개 -->
-              <div class="role">Raven Factory No.9 Rider</div>
+            <img class="ninecard-sticker" data-anchor="bottom left" data-img="sticker"
+                 src="https://i.postimg.cc/fL4ccf78/IMG-2827.png"
+                 style="bottom: -15px; left: -15px; width: 96px; transform: rotate(18deg);">
+
+            <img class="ninecard-sticker" data-anchor="bottom right" data-img="sticker"
+                 src="https://i.postimg.cc/prSXjq8S/IMG-2834.png"
+                 style="bottom: -14px; right: -6px; width: 55px; transform: rotate(-9deg);">
+
+          </div>
+
+          <div class="ninecard-grid">
+            <div class="box dark">
+              <div class="label" contenteditable="true">NAME</div>
+              <div class="value" contenteditable="true">닉 블랙우드</div>
+            </div>
+            <div class="box light">
+              <div class="label" contenteditable="true">NICKNAME</div>
+              <div class="value" contenteditable="true">나인</div>
+            </div>
+            <div class="box light">
+              <div class="label" contenteditable="true">BASIC</div>
+              <div class="value" contenteditable="true">영국 · 24세 · 183cm</div>
+            </div>
+            <div class="box dark">
+              <div class="label" contenteditable="true">TEAM</div>
+              <div class="value" contenteditable="true">레이븐 No.9</div>
             </div>
           </div>
 
-          <!-- 스티커 3 : 왼쪽 아래 -->
-          <img class="ninecard-sticker" src="https://i.postimg.cc/fL4ccf78/IMG-2827.png"
-               style="bottom: -15px; left: -15px; width: clamp(83px, 23vw, 120px); transform: rotate(18deg);">
+          <div class="ninecard-section">
+            <div class="title" contenteditable="true">[외형]</div>
+            <div class="body" contenteditable="true">
+              칠흑 같은 머리와 푸른빛이 도는 짙은 눈동자. 300km가 넘는 속도의 바람을 정면으로 버텨내기 위해 단련된 탄탄한 몸.
+              <b>왼쪽 뺨에 깊게 패이는 보조개.</b>
+              낡은 가죽재킷, 오버사이즈 후드, 찢어진 블랙진, 워싱 데님, 부츠 같은 <b>거친 바이커 무드</b>를 즐겨 입는다.
+            </div>
+          </div>
 
-          <!-- 스티커 4 : 오른쪽 아래 -->
-          <img class="ninecard-sticker" src="https://i.postimg.cc/prSXjq8S/IMG-2834.png"
-               style="bottom: -14px; right: -6px; width: 55px; transform: rotate(-9deg);">
+          <div class="ninecard-section">
+            <div class="title" contenteditable="true">[성격]</div>
+            <div class="body">
+              <div contenteditable="true">보통 제멋대로이며, 의미 없다고 느끼는 일에는 에너지를 거의 쓰지 않는다. 쉬운 승리와 예측 가능한 상황을 싫어하며 기본적으로 세상만사에 지독한 권태를 느끼고 있다.</div>
+              <div class="divider"></div>
+              <div contenteditable="true"><b>낮고 깊은 목소리.</b> 거리낌이 없는 말투. 흥미가 생기면 상대의 말을 물고 늘어지며 질문과 놀림을 연달아 던진다. 무례한 농담은 상대의 반응을 구경하기위에 툭 던지는 쪽에 가깝다.</div>
+            </div>
+          </div>
+
+          <div class="ninecard-section ninecard-offtrack">
+            <div class="title" contenteditable="true">[OFF TRACK]</div>
+            <div class="body">
+              <div class="row"><span class="key" contenteditable="true">SCENT</span><span contenteditable="true">Byredo Black Saffron.</span></div>
+              <div class="row"><span class="key" contenteditable="true">BIKE</span><span contenteditable="true">Bimota custom. 차보다 자주 타는 개인 바이크.</span></div>
+              <div class="row"><span class="key" contenteditable="true">LIKE</span><span contenteditable="true">단 것 · 밤 라이딩 · 의외의 반응.</span></div>
+              <div class="row"><span class="key" contenteditable="true">DISLIKE</span><span contenteditable="true">쉬운 승리 · 잔소리</span></div>
+            </div>
+          </div>
 
         </div>
-
-        <!-- ============================================================
-             기본 정보 2x2
-             ============================================================ -->
-        <div class="ninecard-grid">
-          <div class="box dark">
-            <div class="label">NAME</div>
-            <div class="value">닉 블랙우드</div>
-          </div>
-          <div class="box light">
-            <div class="label">NICKNAME</div>
-            <div class="value">나인</div>
-          </div>
-          <div class="box light">
-            <div class="label">BASIC</div>
-            <div class="value">영국 · 24세 · 183cm</div>
-          </div>
-          <div class="box dark">
-            <div class="label">TEAM</div>
-            <div class="value">레이븐 No.9</div>
-          </div>
-        </div>
-
-        <!-- ============================================================
-             외형
-             ============================================================ -->
-        <div class="ninecard-section">
-          <div class="title">[외형]</div>
-          <div class="body">
-            칠흑 같은 머리와 푸른빛이 도는 짙은 눈동자. 300km가 넘는 속도의 바람을 정면으로 버텨내기 위해 단련된 탄탄한 몸.
-            <b>왼쪽 뺨에 깊게 패이는 보조개.</b>
-            낡은 가죽재킷, 오버사이즈 후드, 찢어진 블랙진, 워싱 데님, 부츠 같은 <b>거친 바이커 무드</b>를 즐겨 입는다.
-          </div>
-        </div>
-
-        <!-- ============================================================
-             성격
-             ============================================================ -->
-        <div class="ninecard-section">
-          <div class="title">[성격]</div>
-          <div class="body">
-            보통 제멋대로이며, 의미 없다고 느끼는 일에는 에너지를 거의 쓰지 않는다. 쉬운 승리와 예측 가능한 상황을 싫어하며 기본적으로 세상만사에 지독한 권태를 느끼고 있다.
-            <div class="divider"></div>
-            <b>낮고 깊은 목소리.</b> 거리낌이 없는 말투. 흥미가 생기면 상대의 말을 물고 늘어지며 질문과 놀림을 연달아 던진다. 무례한 농담은 상대의 반응을 구경하기위에 툭 던지는 쪽에 가깝다.
-          </div>
-        </div>
-
-        <!-- ============================================================
-             OFF TRACK
-             ============================================================ -->
-        <div class="ninecard-section ninecard-offtrack">
-          <div class="title">[OFF TRACK]</div>
-          <div class="body">
-            <div class="row"><span class="key">SCENT</span>Byredo Black Saffron.</div>
-            <div class="row"><span class="key">BIKE</span>Bimota custom. 차보다 자주 타는 개인 바이크.</div>
-            <div class="row"><span class="key">LIKE</span>단 것 · 밤 라이딩 · 의외의 반응.</div>
-            <div class="row"><span class="key">DISLIKE</span>쉬운 승리 · 잔소리</div>
-          </div>
-        </div>
-
       </div>
     </div>
   </div>
 </div>
+
+<!-- 이미지 편집 패널 (사진/스티커 클릭 시 열림) -->
+<div class="img-panel" id="imgPanel">
+  <div class="img-panel-head">
+    <span id="imgPanelTitle">이미지 편집</span>
+    <button type="button" id="imgPanelClose" aria-label="닫기">✕</button>
+  </div>
+  <div class="img-panel-row">
+    <label>이미지 주소 (URL)</label>
+    <input type="text" id="imgUrlInput" placeholder="https://...">
+  </div>
+  <div class="img-panel-row">
+    <label>또는 내 사진 올리기</label>
+    <input type="file" id="imgFileInput" accept="image/*">
+  </div>
+  <div class="img-panel-row" id="stickerControls" hidden>
+    <div class="img-panel-drag-hint">스티커는 카드 위에서 직접 드래그해도 위치가 바뀌어요.</div>
+    <label>크기 <span class="range-val" id="widthVal"></span></label>
+    <input type="range" id="widthRange" min="30" max="220" step="1">
+    <label style="margin-top:8px;">회전 <span class="range-val" id="rotateVal"></span></label>
+    <input type="range" id="rotateRange" min="-45" max="45" step="1">
+  </div>
+</div>
+
+<script>
+(function () {
+  var CARD_KEY = 'ninecard:html:v1';
+  var POINT_KEY = 'ninecard:point:v1';
+
+  var card = document.getElementById('card');
+  var pointInput = document.getElementById('pointColorInput');
+  var copyBtn = document.getElementById('copyBtn');
+  var resetBtn = document.getElementById('resetBtn');
+  var saveStatus = document.getElementById('saveStatus');
+
+  var panel = document.getElementById('imgPanel');
+  var panelTitle = document.getElementById('imgPanelTitle');
+  var panelClose = document.getElementById('imgPanelClose');
+  var urlInput = document.getElementById('imgUrlInput');
+  var fileInput = document.getElementById('imgFileInput');
+  var stickerControls = document.getElementById('stickerControls');
+  var widthRange = document.getElementById('widthRange');
+  var widthVal = document.getElementById('widthVal');
+  var rotateRange = document.getElementById('rotateRange');
+  var rotateVal = document.getElementById('rotateVal');
+
+  var activeImg = null;
+
+  /* ---------- 저장 / 복원 ---------- */
+  var saveTimer = null;
+  function flashSaved() {
+    saveStatus.classList.add('show');
+    clearTimeout(flashSaved._t);
+    flashSaved._t = setTimeout(function () { saveStatus.classList.remove('show'); }, 900);
+  }
+  function saveCardNow() {
+    try {
+      localStorage.setItem(CARD_KEY, card.innerHTML);
+      flashSaved();
+    } catch (e) {}
+  }
+  function saveCard() {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(saveCardNow, 350);
+  }
+
+  function restore() {
+    try {
+      var savedHtml = localStorage.getItem(CARD_KEY);
+      if (savedHtml) card.innerHTML = savedHtml;
+      var savedPoint = localStorage.getItem(POINT_KEY);
+      if (savedPoint) {
+        document.documentElement.style.setProperty('--point-color', savedPoint);
+        pointInput.value = savedPoint;
+      }
+    } catch (e) {}
+  }
+
+  /* ---------- 텍스트 편집 ---------- */
+  function wireEditableText() {
+    var nodes = card.querySelectorAll('[contenteditable="true"]');
+    for (var i = 0; i < nodes.length; i++) {
+      nodes[i].addEventListener('input', saveCard);
+    }
+  }
+
+  /* ---------- 포인트 색상 ---------- */
+  pointInput.addEventListener('input', function () {
+    document.documentElement.style.setProperty('--point-color', pointInput.value);
+    try { localStorage.setItem(POINT_KEY, pointInput.value); } catch (e) {}
+    flashSaved();
+  });
+
+  /* ---------- 이미지 클릭 -> 편집 패널 ---------- */
+  function fileToDataUrl(file, cb) {
+    var reader = new FileReader();
+    reader.onload = function () { cb(reader.result); };
+    reader.readAsDataURL(file);
+  }
+
+  function openPanelFor(img) {
+    activeImg = img;
+    var isSticker = img.dataset.img === 'sticker';
+    panelTitle.textContent = isSticker ? '스티커 편집' : '메인 사진 편집';
+    urlInput.value = img.getAttribute('src') && img.getAttribute('src').indexOf('data:') === 0 ? '' : img.getAttribute('src');
+    urlInput.placeholder = img.getAttribute('src') && img.getAttribute('src').indexOf('data:') === 0
+      ? '(업로드된 이미지 사용 중) 새 주소를 입력하면 교체됩니다'
+      : 'https://...';
+    fileInput.value = '';
+
+    if (isSticker) {
+      stickerControls.hidden = false;
+      var w = parseFloat(img.style.width) || 90;
+      var m = /rotate\((-?\d+(\.\d+)?)deg\)/.exec(img.style.transform || '');
+      var r = m ? parseFloat(m[1]) : 0;
+      widthRange.value = w;
+      widthVal.textContent = Math.round(w) + 'px';
+      rotateRange.value = r;
+      rotateVal.textContent = Math.round(r) + '°';
+    } else {
+      stickerControls.hidden = true;
+    }
+
+    panel.classList.add('open');
+  }
+
+  function closePanel() {
+    panel.classList.remove('open');
+    activeImg = null;
+  }
+
+  panelClose.addEventListener('click', closePanel);
+
+  urlInput.addEventListener('input', function () {
+    if (!activeImg) return;
+    var v = urlInput.value.trim();
+    if (v) {
+      activeImg.setAttribute('src', v);
+      saveCard();
+    }
+  });
+
+  fileInput.addEventListener('change', function () {
+    if (!activeImg || !fileInput.files || !fileInput.files[0]) return;
+    fileToDataUrl(fileInput.files[0], function (dataUrl) {
+      activeImg.setAttribute('src', dataUrl);
+      urlInput.value = '';
+      urlInput.placeholder = '(업로드된 이미지 사용 중) 새 주소를 입력하면 교체됩니다';
+      saveCard();
+    });
+  });
+
+  widthRange.addEventListener('input', function () {
+    if (!activeImg) return;
+    activeImg.style.width = widthRange.value + 'px';
+    widthVal.textContent = widthRange.value + 'px';
+    saveCard();
+  });
+
+  rotateRange.addEventListener('input', function () {
+    if (!activeImg) return;
+    activeImg.style.transform = 'rotate(' + rotateRange.value + 'deg)';
+    rotateVal.textContent = rotateRange.value + '°';
+    saveCard();
+  });
+
+  /* ---------- 스티커 드래그 ---------- */
+  function wireImages() {
+    var mainImgs = card.querySelectorAll('[data-img="main"]');
+    for (var i = 0; i < mainImgs.length; i++) {
+      mainImgs[i].addEventListener('click', function (e) { openPanelFor(e.currentTarget); });
+    }
+
+    var stickers = card.querySelectorAll('.ninecard-sticker');
+    for (var j = 0; j < stickers.length; j++) {
+      wireStickerDrag(stickers[j]);
+    }
+  }
+
+  function wireStickerDrag(img) {
+    var dragging = false;
+    var startX = 0, startY = 0;
+    var start = { left: null, right: null, top: null, bottom: null };
+    var moved = false;
+
+    img.addEventListener('pointerdown', function (e) {
+      e.preventDefault();
+      dragging = true;
+      moved = false;
+      startX = e.clientX;
+      startY = e.clientY;
+      start.left = img.style.left !== '' ? parseFloat(img.style.left) : null;
+      start.right = img.style.right !== '' ? parseFloat(img.style.right) : null;
+      start.top = img.style.top !== '' ? parseFloat(img.style.top) : null;
+      start.bottom = img.style.bottom !== '' ? parseFloat(img.style.bottom) : null;
+      img.classList.add('dragging');
+      try { img.setPointerCapture(e.pointerId); } catch (err) {}
+    });
+
+    img.addEventListener('pointermove', function (e) {
+      if (!dragging) return;
+      var dx = e.clientX - startX;
+      var dy = e.clientY - startY;
+      if (Math.abs(dx) > 3 || Math.abs(dy) > 3) moved = true;
+      if (start.left !== null) img.style.left = (start.left + dx) + 'px';
+      if (start.right !== null) img.style.right = (start.right - dx) + 'px';
+      if (start.top !== null) img.style.top = (start.top + dy) + 'px';
+      if (start.bottom !== null) img.style.bottom = (start.bottom - dy) + 'px';
+    });
+
+    function endDrag(e) {
+      if (!dragging) return;
+      dragging = false;
+      img.classList.remove('dragging');
+      try { img.releasePointerCapture(e.pointerId); } catch (err) {}
+      if (moved) {
+        saveCard();
+      } else {
+        openPanelFor(img);
+      }
+    }
+
+    img.addEventListener('pointerup', endDrag);
+    img.addEventListener('pointercancel', endDrag);
+  }
+
+  /* ---------- 복사 / 초기화 ---------- */
+  function buildExportHtml() {
+    var pointVal = getComputedStyle(document.documentElement).getPropertyValue('--point-color').trim() || '#111111';
+    var cardStyleText = document.getElementById('cardStyle').textContent;
+    var clone = card.cloneNode(true);
+    var editables = clone.querySelectorAll('[contenteditable]');
+    for (var i = 0; i < editables.length; i++) editables[i].removeAttribute('contenteditable');
+
+    return '<!DOCTYPE html>\n' +
+      '<html lang="ko">\n<head>\n<meta charset="UTF-8">\n' +
+      '<meta name="viewport" content="width=device-width, initial-scale=1.0">\n' +
+      '<title>NINE · Nick Blackwood</title>\n' +
+      '<style>\n' +
+      '  * { box-sizing: border-box; }\n' +
+      '  body { margin: 0; padding: 24px 12px; background: #ececec; font-family: -apple-system, "Noto Sans KR", sans-serif; display: flex; justify-content: center; }\n' +
+      '  .card-outer { width: 100%; max-width: 420px; }\n' +
+      '  :root { --point-color: ' + pointVal + '; }\n' +
+      cardStyleText +
+      '\n</style>\n</head>\n<body>\n' +
+      '<div class="card-outer">' + clone.outerHTML + '</div>\n' +
+      '</body>\n</html>\n';
+  }
+
+  copyBtn.addEventListener('click', function () {
+    var html = buildExportHtml();
+    var done = function () {
+      var original = copyBtn.textContent;
+      copyBtn.textContent = '복사됨!';
+      setTimeout(function () { copyBtn.textContent = original; }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(html).then(done, function () { fallbackCopy(html, done); });
+    } else {
+      fallbackCopy(html, done);
+    }
+  });
+
+  function fallbackCopy(text, done) {
+    var scratch = document.createElement('textarea');
+    scratch.value = text;
+    scratch.style.position = 'fixed';
+    scratch.style.opacity = '0';
+    document.body.appendChild(scratch);
+    scratch.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(scratch);
+    done();
+  }
+
+  resetBtn.addEventListener('click', function () {
+    if (!confirm('모든 수정 내용을 처음 상태로 되돌릴까요? 저장된 내용은 사라집니다.')) return;
+    try {
+      localStorage.removeItem(CARD_KEY);
+      localStorage.removeItem(POINT_KEY);
+    } catch (e) {}
+    location.reload();
+  });
+
+  /* ---------- 초기화 ---------- */
+  restore();
+  wireEditableText();
+  wireImages();
+})();
+</script>
 </body>
 </html>
