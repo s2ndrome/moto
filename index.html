@@ -35,18 +35,18 @@
   .ninecard-namebox .role { margin-top: 4px; font-size: 12px; line-height: 1.6; color: #4b5563; }
 
   .ninecard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 16px; color: #222; }
-  .ninecard-grid .box { padding: 12px 10px; box-sizing: border-box; min-height: 74px; display: flex; flex-direction: column; justify-content: center; }
+  .ninecard-grid .box { --cell-color: var(--point-color); position: relative; padding: 12px 10px; box-sizing: border-box; min-height: 74px; display: flex; flex-direction: column; justify-content: center; }
   .ninecard-grid .box .label { font-size: 9px; font-weight: 900; letter-spacing: .16em; margin-bottom: 6px; }
   .ninecard-grid .box .value { font-size: 15px; font-weight: 900; line-height: 1.35; }
-  .ninecard-grid .box.dark { background: var(--point-color); }
+  .ninecard-grid .box.dark { background: var(--cell-color); }
   .ninecard-grid .box.dark .label { color: #d1d5db; }
   .ninecard-grid .box.dark .value { color: #fff; }
-  .ninecard-grid .box.light { background: #f3f4f6; border-left: 5px solid var(--point-color); }
+  .ninecard-grid .box.light { background: #f3f4f6; border-left: 5px solid var(--cell-color); }
   .ninecard-grid .box.light .label { color: #6b7280; }
-  .ninecard-grid .box.light .value { color: var(--point-color); }
+  .ninecard-grid .box.light .value { color: var(--cell-color); }
 
-  .ninecard-section { background: #fff; border: 1px solid var(--point-color); padding: 14px 13px; margin-bottom: 10px; box-sizing: border-box; box-shadow: 4px 4px 0 rgba(17,17,17,.10); }
-  .ninecard-section .title { font-size: 12px; font-weight: 900; letter-spacing: .08em; margin-bottom: 6px; color: var(--point-color); }
+  .ninecard-section { --cell-color: var(--point-color); position: relative; background: #fff; border: 1px solid var(--cell-color); padding: 14px 13px; margin-bottom: 10px; box-sizing: border-box; box-shadow: 4px 4px 0 rgba(17,17,17,.10); }
+  .ninecard-section .title { font-size: 12px; font-weight: 900; letter-spacing: .08em; margin-bottom: 6px; color: var(--cell-color); }
   .ninecard-section .body { font-size: 13px; line-height: 1.75; color: #222; }
   .ninecard-section .divider { height: 1px; border-top: 1px dashed #d4d4d8; margin: 10px 0; }
 
@@ -89,6 +89,16 @@
   .ninecard-photo img, .ninecard-sticker { cursor: pointer; }
   .ninecard-sticker:hover { outline: 2px dashed rgba(59,130,246,.6); outline-offset: 2px; }
   .ninecard-sticker.dragging { outline: 2px solid #3b82f6; cursor: grabbing; opacity: .9; }
+
+  /* ---- 칸별 색상 지정 점 ---- */
+  .cell-color-picker { position: absolute; top: 6px; right: 6px; z-index: 6; display: block; width: 15px; height: 15px; cursor: pointer; }
+  .cell-color-picker input[type="color"] { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; border: 0; padding: 0; margin: 0; cursor: pointer; }
+  .cell-color-dot {
+    display: block; width: 100%; height: 100%; border-radius: 50%; box-sizing: border-box;
+    background: var(--cell-color); border: 1.5px solid rgba(255,255,255,.9);
+    box-shadow: 0 0 0 1px rgba(0,0,0,.3); pointer-events: none;
+  }
+  .cell-color-picker:hover .cell-color-dot { box-shadow: 0 0 0 1px rgba(0,0,0,.3), 0 0 0 3px rgba(59,130,246,.35); }
 
   /* ---- 하단 이미지 편집 패널 ---- */
   .img-panel {
@@ -193,29 +203,35 @@
 
           <div class="ninecard-grid">
             <div class="box dark">
+              <label class="cell-color-picker"><input type="color" class="cell-color-input" value="#111111"><span class="cell-color-dot"></span></label>
               <div class="label" contenteditable="true">NAME</div>
               <div class="value" contenteditable="true" data-placeholder="이름을 입력하세요"></div>
             </div>
             <div class="box light">
+              <label class="cell-color-picker"><input type="color" class="cell-color-input" value="#111111"><span class="cell-color-dot"></span></label>
               <div class="label" contenteditable="true">NICKNAME</div>
               <div class="value" contenteditable="true" data-placeholder="닉네임을 입력하세요"></div>
             </div>
             <div class="box light">
+              <label class="cell-color-picker"><input type="color" class="cell-color-input" value="#111111"><span class="cell-color-dot"></span></label>
               <div class="label" contenteditable="true">BASIC</div>
               <div class="value" contenteditable="true" data-placeholder="국적 · 나이 · 키"></div>
             </div>
             <div class="box dark">
+              <label class="cell-color-picker"><input type="color" class="cell-color-input" value="#111111"><span class="cell-color-dot"></span></label>
               <div class="label" contenteditable="true">TEAM</div>
               <div class="value" contenteditable="true" data-placeholder="소속을 입력하세요"></div>
             </div>
           </div>
 
           <div class="ninecard-section">
+            <label class="cell-color-picker"><input type="color" class="cell-color-input" value="#111111"><span class="cell-color-dot"></span></label>
             <div class="title" contenteditable="true">[외형]</div>
             <div class="body" contenteditable="true" data-placeholder="외형을 입력하세요"></div>
           </div>
 
           <div class="ninecard-section">
+            <label class="cell-color-picker"><input type="color" class="cell-color-input" value="#111111"><span class="cell-color-dot"></span></label>
             <div class="title" contenteditable="true">[성격]</div>
             <div class="body">
               <div contenteditable="true" data-placeholder="성격을 입력하세요"></div>
@@ -225,6 +241,7 @@
           </div>
 
           <div class="ninecard-section ninecard-offtrack">
+            <label class="cell-color-picker"><input type="color" class="cell-color-input" value="#111111"><span class="cell-color-dot"></span></label>
             <div class="title" contenteditable="true">[OFF TRACK]</div>
             <div class="body">
               <div class="row"><span class="key" contenteditable="true">SCENT</span><span contenteditable="true" data-placeholder="내용을 입력하세요"></span></div>
@@ -326,6 +343,21 @@
     var nodes = card.querySelectorAll('[contenteditable="true"]');
     for (var i = 0; i < nodes.length; i++) {
       nodes[i].addEventListener('input', saveCard);
+    }
+  }
+
+  /* ---------- 칸별 색상 지정 ---------- */
+  function wireCellColorPickers() {
+    var inputs = card.querySelectorAll('.cell-color-input');
+    for (var i = 0; i < inputs.length; i++) {
+      inputs[i].addEventListener('input', function (e) {
+        var container = e.target.closest('.box, .ninecard-section');
+        if (!container) return;
+        container.style.setProperty('--cell-color', e.target.value);
+        saveCard();
+      });
+      // 라벨/칸 클릭 시 텍스트 편집 포커스로 이어지지 않도록 분리
+      inputs[i].addEventListener('click', function (e) { e.stopPropagation(); });
     }
   }
 
@@ -476,6 +508,8 @@
     var clone = card.cloneNode(true);
     var editables = clone.querySelectorAll('[contenteditable]');
     for (var i = 0; i < editables.length; i++) editables[i].removeAttribute('contenteditable');
+    var pickers = clone.querySelectorAll('.cell-color-picker');
+    for (var p = 0; p < pickers.length; p++) pickers[p].remove();
 
     return '<!DOCTYPE html>\n' +
       '<html lang="ko">\n<head>\n<meta charset="UTF-8">\n' +
@@ -584,6 +618,7 @@
   restore();
   wireEditableText();
   wireImages();
+  wireCellColorPickers();
 })();
 </script>
 </body>
