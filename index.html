@@ -394,7 +394,7 @@
   function restore() {
     try {
       var savedHtml = localStorage.getItem(CARD_KEY);
-      if (savedHtml) card.innerHTML = savedHtml;
+      if (savedHtml) card.innerHTML = savedHtml.replace(/ninecard/g, 'card');
       var savedPoint = localStorage.getItem(POINT_KEY);
       if (savedPoint) {
         document.documentElement.style.setProperty('--point-color', savedPoint);
