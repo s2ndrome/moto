@@ -660,17 +660,22 @@
     var pickers = clone.querySelectorAll('.cell-color-picker');
     for (var p = 0; p < pickers.length; p++) pickers[p].remove();
 
-    return '<!DOCTYPE html>\n' +
-      '<html lang="ko">\n<head>\n<meta charset="UTF-8">\n' +
-      '<meta name="viewport" content="width=device-width, initial-scale=1.0">\n' +
-      '<title>RIDER CARD</title>\n' +
+    var mainImgs = clone.querySelectorAll('[data-img="main"]');
+    for (var m = 0; m < mainImgs.length; m++) {
+      if (mainImgs[m].getAttribute('src').indexOf('data:') === 0) mainImgs[m].setAttribute('src', 'main.png');
+    }
+    var stickerImgs = clone.querySelectorAll('.ninecard-sticker');
+    for (var s = 0; s < stickerImgs.length; s++) {
+      if (stickerImgs[s].getAttribute('src').indexOf('data:') === 0) stickerImgs[s].setAttribute('src', 'sticker' + (s + 1) + '.png');
+    }
+
+    return '<div class="card-outer">\n' +
       '<style>\n' +
       '  * { box-sizing: border-box; }\n' +
-      '  body { margin: 0; padding: 24px 12px; background: #ececec; font-family: -apple-system, "Noto Sans KR", sans-serif; display: flex; justify-content: center; }\n' +
-      '  .card-outer { width: 100%; max-width: 420px; }\n' +
+      '  .card-outer { width: 100%; max-width: 420px; margin: 0 auto; }\n' +
       '  :root { --point-color: ' + pointVal + '; }\n' +
       cardStyleText +
-      '\n</style>\n</head>\n<body>\n' +
+      '\n</style>\n' +
       '<svg width="0" height="0" style="position: absolute; overflow: hidden;" aria-hidden="true">\n' +
       '  <defs>\n' +
       '    <filter id="stickerOutline" x="-30%" y="-30%" width="160%" height="160%">\n' +
@@ -684,8 +689,8 @@
       '    </filter>\n' +
       '  </defs>\n' +
       '</svg>\n' +
-      '<div class="card-outer">' + clone.outerHTML + '</div>\n' +
-      '</body>\n</html>\n';
+      clone.outerHTML + '\n' +
+      '</div>\n';
   }
 
   copyBtn.addEventListener('click', function () {
