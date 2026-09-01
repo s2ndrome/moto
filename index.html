@@ -174,6 +174,7 @@
   <span class="save-status" id="saveStatus">저장됨</span>
 </div>
 <p class="app-hint">글자는 클릭해서 바로 수정하세요. 사진을 클릭하면 이미지를 바꿀 수 있고, 스티커는 드래그해서 위치를 옮길 수 있어요. 수정 내용은 이 브라우저에 자동 저장됩니다.</p>
+<p class="app-hint">"내 사진 올리기"로 직접 올린 사진은 복사한 코드 안에 통째로 들어가서 코드가 길어져요. 코드를 짧게 유지하려면 사진을 postimg.cc 같은 곳에 올리고, 거기서 받은 이미지 주소(URL)를 입력하는 걸 추천해요.</p>
 
 <div class="stage">
   <div class="card-outer">
@@ -721,6 +722,9 @@
   copyBtn.addEventListener('click', function () {
     window.focus();
     var html = buildExportHtml();
+    if (html.indexOf('data:image/jpeg') !== -1 || html.indexOf('data:image/png') !== -1) {
+      alert('사진을 "내 사진 올리기"로 직접 넣으면 복사한 코드가 아주 길어져요.\n코드를 짧게 유지하려면 사진을 postimg.cc 같은 곳에 올리고, 이미지 편집 패널에서 그 주소(URL)를 직접 입력해서 써주세요.');
+    }
     var done = function (ok) {
       var original = copyBtn.textContent;
       copyBtn.textContent = ok === false ? '복사 실패 (직접 선택해 복사해주세요)' : '복사됨!';
