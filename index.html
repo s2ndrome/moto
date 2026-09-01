@@ -5,66 +5,66 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RIDER CARD</title>
 <style id="cardStyle">
-  .ninecard { padding: 12px; box-sizing: border-box; }
-  .ninecard[data-bg-type="checker"] {
+  .card { padding: 12px; box-sizing: border-box; }
+  .card[data-bg-type="checker"] {
     --bg-color: var(--point-color);
     background: linear-gradient(45deg, var(--bg-color) 25%, transparent 25%, transparent 75%, var(--bg-color) 75%, var(--bg-color)),
                 linear-gradient(45deg, var(--bg-color) 25%, #fff 25%, #fff 75%, var(--bg-color) 75%, var(--bg-color));
     background-size: 22px 22px;
     background-position: 0 0, 11px 11px;
   }
-  .ninecard[data-bg-type="gradient"] {
+  .card[data-bg-type="gradient"] {
     --bg-color-1: var(--point-color);
     --bg-color-2: #4b5563;
     background: linear-gradient(135deg, var(--bg-color-1), var(--bg-color-2));
   }
-  .ninecard[data-bg-type="image"] {
+  .card[data-bg-type="image"] {
     background-color: #e5e7eb;
     background-image: var(--bg-image, none);
     background-size: cover;
     background-position: center;
   }
-  .ninecard-inner { background: #fff; position: relative; overflow: hidden; padding: 14px; box-sizing: border-box; }
-  .ninecard-watermark {
+  .card-inner { background: #fff; position: relative; overflow: hidden; padding: 14px; box-sizing: border-box; }
+  .card-watermark {
     position: absolute; top: 48px; right: 18px; font-size: 48px; font-weight: 900;
     letter-spacing: .08em; color: var(--point-color); opacity: .05; line-height: 1; z-index: 0;
   }
-  .ninecard-content { position: relative; z-index: 2; }
+  .card-content { position: relative; z-index: 2; }
 
-  .ninecard-photowrap { position: relative; width: 100%; background: #fff; box-sizing: border-box; margin-bottom: 18px; padding: 4px 4px 8px; overflow: visible; }
-  .ninecard-sticker { position: absolute; height: auto; object-fit: contain; border: 0; z-index: 8; filter: url(#stickerOutline) drop-shadow(0 6px 10px rgba(0,0,0,.2)); touch-action: none; }
-  .ninecard-frame {
+  .card-photowrap { position: relative; width: 100%; background: #fff; box-sizing: border-box; margin-bottom: 18px; padding: 4px 4px 8px; overflow: visible; }
+  .card-sticker { position: absolute; height: auto; object-fit: contain; border: 0; z-index: 8; filter: url(#stickerOutline) drop-shadow(0 6px 10px rgba(0,0,0,.2)); touch-action: none; }
+  .card-frame {
     width: 100%; background: #fff; border: 1px solid var(--point-color); padding: 10px 10px 16px; box-sizing: border-box;
     box-shadow: 6px 6px 0 rgba(17,17,17,.12); position: relative; z-index: 4;
   }
-  .ninecard-photo { width: 100%; aspect-ratio: 3/4; background: #e5e7eb; border: 1px solid var(--point-color); overflow: hidden; position: relative; box-sizing: border-box; }
-  .ninecard-photo img { display: block; width: 100%; height: 100%; object-fit: cover; border: 0; }
-  .ninecard-photo-shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(17,17,17,.10) 55%, rgba(17,17,17,.72) 100%); pointer-events: none; }
-  .ninecard-photo-label { position: absolute; left: 16px; bottom: 16px; font-size: 44px; font-weight: 900; letter-spacing: .12em; color: #fff; line-height: 1; }
-  .ninecard-namebox { margin-top: 14px; text-align: center; }
-  .ninecard-namebox .name { font-size: 20px; font-weight: 900; letter-spacing: .08em; color: var(--point-color); }
-  .ninecard-namebox .role { margin-top: 4px; font-size: 12px; line-height: 1.6; color: #4b5563; }
+  .card-photo { width: 100%; aspect-ratio: 3/4; background: #e5e7eb; border: 1px solid var(--point-color); overflow: hidden; position: relative; box-sizing: border-box; }
+  .card-photo img { display: block; width: 100%; height: 100%; object-fit: cover; border: 0; }
+  .card-photo-shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(17,17,17,.10) 55%, rgba(17,17,17,.72) 100%); pointer-events: none; }
+  .card-photo-label { position: absolute; left: 16px; bottom: 16px; font-size: 44px; font-weight: 900; letter-spacing: .12em; color: #fff; line-height: 1; }
+  .card-namebox { margin-top: 14px; text-align: center; }
+  .card-namebox .name { font-size: 20px; font-weight: 900; letter-spacing: .08em; color: var(--point-color); }
+  .card-namebox .role { margin-top: 4px; font-size: 12px; line-height: 1.6; color: #4b5563; }
 
-  .ninecard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 16px; color: #222; }
-  .ninecard-grid .box { --cell-color: var(--point-color); position: relative; padding: 12px 10px; box-sizing: border-box; min-height: 74px; display: flex; flex-direction: column; justify-content: center; }
-  .ninecard-grid .box .label { font-size: 9px; font-weight: 900; letter-spacing: .16em; margin-bottom: 6px; }
-  .ninecard-grid .box .value { font-size: 15px; font-weight: 900; line-height: 1.35; }
-  .ninecard-grid .box.dark { background: var(--cell-color); }
-  .ninecard-grid .box.dark .label { color: #d1d5db; }
-  .ninecard-grid .box.dark .value { color: #fff; }
-  .ninecard-grid .box.light { background: #f3f4f6; border-left: 5px solid var(--cell-color); }
-  .ninecard-grid .box.light .label { color: #6b7280; }
-  .ninecard-grid .box.light .value { color: var(--cell-color); }
+  .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 16px; color: #222; }
+  .card-grid .box { --cell-color: var(--point-color); position: relative; padding: 12px 10px; box-sizing: border-box; min-height: 74px; display: flex; flex-direction: column; justify-content: center; }
+  .card-grid .box .label { font-size: 9px; font-weight: 900; letter-spacing: .16em; margin-bottom: 6px; }
+  .card-grid .box .value { font-size: 15px; font-weight: 900; line-height: 1.35; }
+  .card-grid .box.dark { background: var(--cell-color); }
+  .card-grid .box.dark .label { color: #d1d5db; }
+  .card-grid .box.dark .value { color: #fff; }
+  .card-grid .box.light { background: #f3f4f6; border-left: 5px solid var(--cell-color); }
+  .card-grid .box.light .label { color: #6b7280; }
+  .card-grid .box.light .value { color: var(--cell-color); }
 
-  .ninecard-section { --cell-color: var(--point-color); position: relative; background: #fff; border: 1px solid var(--cell-color); padding: 14px 13px; margin-bottom: 10px; box-sizing: border-box; box-shadow: 4px 4px 0 rgba(17,17,17,.10); }
-  .ninecard-section .title { font-size: 12px; font-weight: 900; letter-spacing: .08em; margin-bottom: 6px; color: var(--cell-color); }
-  .ninecard-section .body { font-size: 13px; line-height: 1.75; color: #222; }
-  .ninecard-section .divider { height: 1px; border-top: 1px dashed #d4d4d8; margin: 10px 0; }
+  .card-section { --cell-color: var(--point-color); position: relative; background: #fff; border: 1px solid var(--cell-color); padding: 14px 13px; margin-bottom: 10px; box-sizing: border-box; box-shadow: 4px 4px 0 rgba(17,17,17,.10); }
+  .card-section .title { font-size: 12px; font-weight: 900; letter-spacing: .08em; margin-bottom: 6px; color: var(--cell-color); }
+  .card-section .body { font-size: 13px; line-height: 1.75; color: #222; }
+  .card-section .divider { height: 1px; border-top: 1px dashed #d4d4d8; margin: 10px 0; }
 
-  .ninecard-offtrack .title { margin-bottom: 9px; }
-  .ninecard-offtrack .row { border-top: 1px dashed #d4d4d8; padding: 8px 0; font-size: 12px; line-height: 1.7; color: #222; }
-  .ninecard-offtrack .row:last-child { border-bottom: 1px dashed #d4d4d8; }
-  .ninecard-offtrack .row .key { font-weight: 900; letter-spacing: .08em; margin-right: 6px; }
+  .card-offtrack .title { margin-bottom: 9px; }
+  .card-offtrack .row { border-top: 1px dashed #d4d4d8; padding: 8px 0; font-size: 12px; line-height: 1.7; color: #222; }
+  .card-offtrack .row:last-child { border-bottom: 1px dashed #d4d4d8; }
+  .card-offtrack .row .key { font-weight: 900; letter-spacing: .08em; margin-right: 6px; }
 </style>
 <style>
   :root { --point-color: #111111; }
@@ -97,9 +97,9 @@
   [contenteditable="true"]:focus { box-shadow: 0 0 0 2px #3b82f6; background: rgba(59,130,246,.06); }
   [contenteditable="true"]:empty::before { content: attr(data-placeholder); color: #9ca3af; font-weight: 400; pointer-events: none; }
 
-  .ninecard-photo img, .ninecard-sticker { cursor: pointer; }
-  .ninecard-sticker:hover { outline: 2px dashed rgba(59,130,246,.6); outline-offset: 2px; }
-  .ninecard-sticker.dragging { outline: 2px solid #3b82f6; cursor: grabbing; opacity: .9; }
+  .card-photo img, .card-sticker { cursor: pointer; }
+  .card-sticker:hover { outline: 2px dashed rgba(59,130,246,.6); outline-offset: 2px; }
+  .card-sticker.dragging { outline: 2px solid #3b82f6; cursor: grabbing; opacity: .9; }
 
   /* ---- 칸별 색상 지정 점 ---- */
   .cell-color-picker { position: absolute; top: 6px; right: 6px; z-index: 6; display: block; width: 15px; height: 15px; cursor: pointer; }
@@ -177,46 +177,46 @@
 
 <div class="stage">
   <div class="card-outer">
-    <div class="ninecard" id="card" data-bg-type="checker">
-      <div class="ninecard-inner">
-        <div class="ninecard-watermark" contenteditable="true" data-placeholder="워터마크"></div>
+    <div class="card" id="card" data-bg-type="checker">
+      <div class="card-inner">
+        <div class="card-watermark" contenteditable="true" data-placeholder="워터마크"></div>
 
-        <div class="ninecard-content">
+        <div class="card-content">
 
-          <div class="ninecard-photowrap">
+          <div class="card-photowrap">
 
-            <img class="ninecard-sticker" data-anchor="top left" data-img="sticker"
+            <img class="card-sticker" data-anchor="top left" data-img="sticker"
                  src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxMjAnIGhlaWdodD0nMTIwJz48cmVjdCB3aWR0aD0nMTAwJScgaGVpZ2h0PScxMDAlJyByeD0nMTYnIGZpbGw9JyNlNWU3ZWInLz48dGV4dCB4PSc1MCUnIHk9JzYwJScgZm9udC1mYW1pbHk9J3NhbnMtc2VyaWYnIGZvbnQtc2l6ZT0nNDYnIGZpbGw9JyNhM2EzYTMnIHRleHQtYW5jaG9yPSdtaWRkbGUnPis8L3RleHQ+PC9zdmc+"
                  style="top: -18px; left: -8px; width: 96px; transform: rotate(-12deg);">
 
-            <img class="ninecard-sticker" data-anchor="top right" data-img="sticker"
+            <img class="card-sticker" data-anchor="top right" data-img="sticker"
                  src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxMjAnIGhlaWdodD0nMTIwJz48cmVjdCB3aWR0aD0nMTAwJScgaGVpZ2h0PScxMDAlJyByeD0nMTYnIGZpbGw9JyNlNWU3ZWInLz48dGV4dCB4PSc1MCUnIHk9JzYwJScgZm9udC1mYW1pbHk9J3NhbnMtc2VyaWYnIGZvbnQtc2l6ZT0nNDYnIGZpbGw9JyNhM2EzYTMnIHRleHQtYW5jaG9yPSdtaWRkbGUnPis8L3RleHQ+PC9zdmc+"
                  style="top: -16px; right: -6px; width: 84px; transform: rotate(10deg);">
 
-            <div class="ninecard-frame">
-              <div class="ninecard-photo">
+            <div class="card-frame">
+              <div class="card-photo">
                 <img data-img="main" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSczMDAnIGhlaWdodD0nNDAwJz48cmVjdCB3aWR0aD0nMTAwJScgaGVpZ2h0PScxMDAlJyBmaWxsPScjZTVlN2ViJy8+PHRleHQgeD0nNTAlJyB5PSc0NiUnIGZvbnQtZmFtaWx5PSdzYW5zLXNlcmlmJyBmb250LXNpemU9JzQ4JyBmaWxsPScjYTNhM2EzJyB0ZXh0LWFuY2hvcj0nbWlkZGxlJz4rPC90ZXh0Pjx0ZXh0IHg9JzUwJScgeT0nNTglJyBmb250LWZhbWlseT0nc2Fucy1zZXJpZicgZm9udC1zaXplPScxNScgZmlsbD0nI2EzYTNhMycgdGV4dC1hbmNob3I9J21pZGRsZSc+7IKs7KeE7J2EIO2BtOumre2VtOyEnCDstpTqsIDtlZjshLjsmpQ8L3RleHQ+PC9zdmc+">
-                <div class="ninecard-photo-shade"></div>
-                <div class="ninecard-photo-label" contenteditable="true" data-placeholder="NAME"></div>
+                <div class="card-photo-shade"></div>
+                <div class="card-photo-label" contenteditable="true" data-placeholder="NAME"></div>
               </div>
 
-              <div class="ninecard-namebox">
+              <div class="card-namebox">
                 <div class="name" contenteditable="true" data-placeholder="이름을 입력하세요"></div>
                 <div class="role" contenteditable="true" data-placeholder="소개를 입력하세요"></div>
               </div>
             </div>
 
-            <img class="ninecard-sticker" data-anchor="bottom left" data-img="sticker"
+            <img class="card-sticker" data-anchor="bottom left" data-img="sticker"
                  src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxMjAnIGhlaWdodD0nMTIwJz48cmVjdCB3aWR0aD0nMTAwJScgaGVpZ2h0PScxMDAlJyByeD0nMTYnIGZpbGw9JyNlNWU3ZWInLz48dGV4dCB4PSc1MCUnIHk9JzYwJScgZm9udC1mYW1pbHk9J3NhbnMtc2VyaWYnIGZvbnQtc2l6ZT0nNDYnIGZpbGw9JyNhM2EzYTMnIHRleHQtYW5jaG9yPSdtaWRkbGUnPis8L3RleHQ+PC9zdmc+"
                  style="bottom: -15px; left: -15px; width: 96px; transform: rotate(18deg);">
 
-            <img class="ninecard-sticker" data-anchor="bottom right" data-img="sticker"
+            <img class="card-sticker" data-anchor="bottom right" data-img="sticker"
                  src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxMjAnIGhlaWdodD0nMTIwJz48cmVjdCB3aWR0aD0nMTAwJScgaGVpZ2h0PScxMDAlJyByeD0nMTYnIGZpbGw9JyNlNWU3ZWInLz48dGV4dCB4PSc1MCUnIHk9JzYwJScgZm9udC1mYW1pbHk9J3NhbnMtc2VyaWYnIGZvbnQtc2l6ZT0nNDYnIGZpbGw9JyNhM2EzYTMnIHRleHQtYW5jaG9yPSdtaWRkbGUnPis8L3RleHQ+PC9zdmc+"
                  style="bottom: -14px; right: -6px; width: 55px; transform: rotate(-9deg);">
 
           </div>
 
-          <div class="ninecard-grid">
+          <div class="card-grid">
             <div class="box dark">
               <label class="cell-color-picker"><input type="color" class="cell-color-input" value="#111111"><span class="cell-color-dot"></span></label>
               <div class="label" contenteditable="true">NAME</div>
@@ -239,13 +239,13 @@
             </div>
           </div>
 
-          <div class="ninecard-section">
+          <div class="card-section">
             <label class="cell-color-picker"><input type="color" class="cell-color-input" value="#111111"><span class="cell-color-dot"></span></label>
             <div class="title" contenteditable="true">[외형]</div>
             <div class="body" contenteditable="true" data-placeholder="외형을 입력하세요"></div>
           </div>
 
-          <div class="ninecard-section">
+          <div class="card-section">
             <label class="cell-color-picker"><input type="color" class="cell-color-input" value="#111111"><span class="cell-color-dot"></span></label>
             <div class="title" contenteditable="true">[성격]</div>
             <div class="body">
@@ -255,7 +255,7 @@
             </div>
           </div>
 
-          <div class="ninecard-section ninecard-offtrack">
+          <div class="card-section card-offtrack">
             <label class="cell-color-picker"><input type="color" class="cell-color-input" value="#111111"><span class="cell-color-dot"></span></label>
             <div class="title" contenteditable="true">[OFF TRACK]</div>
             <div class="body">
@@ -285,6 +285,7 @@
   <div class="img-panel-row">
     <label>또는 내 사진 올리기</label>
     <input type="file" id="imgFileInput" accept="image/*">
+    <div class="img-panel-drag-hint" id="imgFileHint">사진을 올리면 자동으로 <span id="imgFileHintName"></span> 이름으로 다운로드돼요. HTML 복사본과 같은 폴더에 그 파일을 올려야 사진이 보여요.</div>
   </div>
   <div class="img-panel-row" id="stickerControls" hidden>
     <div class="img-panel-drag-hint">스티커는 카드 위에서 직접 드래그해도 위치가 바뀌어요.</div>
@@ -346,6 +347,7 @@
   var panelClose = document.getElementById('imgPanelClose');
   var urlInput = document.getElementById('imgUrlInput');
   var fileInput = document.getElementById('imgFileInput');
+  var fileHintName = document.getElementById('imgFileHintName');
   var stickerControls = document.getElementById('stickerControls');
   var widthRange = document.getElementById('widthRange');
   var widthVal = document.getElementById('widthVal');
@@ -419,7 +421,7 @@
     var inputs = card.querySelectorAll('.cell-color-input');
     for (var i = 0; i < inputs.length; i++) {
       inputs[i].addEventListener('input', function (e) {
-        var container = e.target.closest('.box, .ninecard-section');
+        var container = e.target.closest('.box, .card-section');
         if (!container) return;
         container.style.setProperty('--cell-color', e.target.value);
         saveCard();
@@ -520,6 +522,28 @@
     reader.readAsDataURL(file);
   }
 
+  function exportFileNameFor(img) {
+    if (img.dataset.img === 'sticker') {
+      var stickers = card.querySelectorAll('.card-sticker');
+      for (var i = 0; i < stickers.length; i++) {
+        if (stickers[i] === img) return 'sticker' + (i + 1) + '.png';
+      }
+      return 'sticker.png';
+    }
+    return 'main.png';
+  }
+
+  function downloadRenamedFile(file, filename) {
+    var url = URL.createObjectURL(file);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+  }
+
   function openPanelFor(img) {
     closeBgPanel();
     activeImg = img;
@@ -533,6 +557,7 @@
       ? '(업로드된 이미지 사용 중) 새 주소를 입력하면 교체됩니다'
       : 'https://...';
     fileInput.value = '';
+    fileHintName.textContent = exportFileNameFor(img);
 
     if (isSticker) {
       stickerControls.hidden = false;
@@ -568,7 +593,10 @@
 
   fileInput.addEventListener('change', function () {
     if (!activeImg || !fileInput.files || !fileInput.files[0]) return;
-    fileToDataUrl(fileInput.files[0], function (dataUrl) {
+    var uploadedFile = fileInput.files[0];
+    var renamedTo = exportFileNameFor(activeImg);
+    downloadRenamedFile(uploadedFile, renamedTo);
+    fileToDataUrl(uploadedFile, function (dataUrl) {
       activeImg.setAttribute('src', dataUrl);
       urlInput.value = '';
       urlInput.placeholder = '(업로드된 이미지 사용 중) 새 주소를 입력하면 교체됩니다';
@@ -597,7 +625,7 @@
       mainImgs[i].addEventListener('click', function (e) { openPanelFor(e.currentTarget); });
     }
 
-    var stickers = card.querySelectorAll('.ninecard-sticker');
+    var stickers = card.querySelectorAll('.card-sticker');
     for (var j = 0; j < stickers.length; j++) {
       wireStickerDrag(stickers[j]);
     }
@@ -664,7 +692,7 @@
     for (var m = 0; m < mainImgs.length; m++) {
       if (mainImgs[m].getAttribute('src').indexOf('data:') === 0) mainImgs[m].setAttribute('src', 'main.png');
     }
-    var stickerImgs = clone.querySelectorAll('.ninecard-sticker');
+    var stickerImgs = clone.querySelectorAll('.card-sticker');
     for (var s = 0; s < stickerImgs.length; s++) {
       if (stickerImgs[s].getAttribute('src').indexOf('data:') === 0) stickerImgs[s].setAttribute('src', 'sticker' + (s + 1) + '.png');
     }
@@ -694,14 +722,15 @@
   }
 
   copyBtn.addEventListener('click', function () {
+    window.focus();
     var html = buildExportHtml();
-    var done = function () {
+    var done = function (ok) {
       var original = copyBtn.textContent;
-      copyBtn.textContent = '복사됨!';
-      setTimeout(function () { copyBtn.textContent = original; }, 1400);
+      copyBtn.textContent = ok === false ? '복사 실패 (직접 선택해 복사해주세요)' : '복사됨!';
+      setTimeout(function () { copyBtn.textContent = original; }, 1800);
     };
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(html).then(done, function () { fallbackCopy(html, done); });
+      navigator.clipboard.writeText(html).then(function () { done(true); }, function () { fallbackCopy(html, done); });
     } else {
       fallbackCopy(html, done);
     }
@@ -713,14 +742,17 @@
     scratch.style.position = 'fixed';
     scratch.style.opacity = '0';
     document.body.appendChild(scratch);
+    scratch.focus();
     scratch.select();
-    try { document.execCommand('copy'); } catch (e) {}
+    scratch.setSelectionRange(0, text.length);
+    var ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) {}
     document.body.removeChild(scratch);
-    done();
+    done(ok);
   }
 
   function safeFileName() {
-    var nameEl = card.querySelector('.ninecard-namebox .name');
+    var nameEl = card.querySelector('.card-namebox .name');
     var raw = (nameEl ? nameEl.textContent : '').trim() || 'rider-card';
     var cleaned = raw.replace(/\s+/g, '_').replace(/[^\w\-가-힣]/g, '');
     return (cleaned || 'rider-card') + '.png';
