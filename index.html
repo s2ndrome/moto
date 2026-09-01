@@ -285,7 +285,6 @@
   <div class="img-panel-row">
     <label>또는 내 사진 올리기</label>
     <input type="file" id="imgFileInput" accept="image/*">
-    <div class="img-panel-drag-hint" id="imgFileHint">HTML 복사본에는 이 파일 이름(<span id="imgFileHintName"></span>)이 그대로 들어가요. 복사한 코드와 같은 폴더에 그 이름 그대로 사진 파일을 올려야 사진이 보여요.</div>
   </div>
   <div class="img-panel-row" id="stickerControls" hidden>
     <div class="img-panel-drag-hint">스티커는 카드 위에서 직접 드래그해도 위치가 바뀌어요.</div>
@@ -347,7 +346,6 @@
   var panelClose = document.getElementById('imgPanelClose');
   var urlInput = document.getElementById('imgUrlInput');
   var fileInput = document.getElementById('imgFileInput');
-  var fileHintName = document.getElementById('imgFileHintName');
   var stickerControls = document.getElementById('stickerControls');
   var widthRange = document.getElementById('widthRange');
   var widthVal = document.getElementById('widthVal');
@@ -522,21 +520,6 @@
     reader.readAsDataURL(file);
   }
 
-  function fallbackFileNameFor(img) {
-    if (img.dataset.img === 'sticker') {
-      var stickers = card.querySelectorAll('.card-sticker');
-      for (var i = 0; i < stickers.length; i++) {
-        if (stickers[i] === img) return 'sticker' + (i + 1) + '.png';
-      }
-      return 'sticker.png';
-    }
-    return 'main.png';
-  }
-
-  function exportFileNameFor(img) {
-    return img.dataset.filename || fallbackFileNameFor(img);
-  }
-
   function openPanelFor(img) {
     closeBgPanel();
     activeImg = img;
@@ -550,7 +533,6 @@
       ? '(업로드된 이미지 사용 중) 새 주소를 입력하면 교체됩니다'
       : 'https://...';
     fileInput.value = '';
-    fileHintName.textContent = exportFileNameFor(img);
 
     if (isSticker) {
       stickerControls.hidden = false;
@@ -579,7 +561,6 @@
     if (!activeImg) return;
     var v = urlInput.value.trim();
     if (v) {
-      activeImg.removeAttribute('data-filename');
       activeImg.setAttribute('src', v);
       saveCard();
     }
@@ -587,11 +568,8 @@
 
   fileInput.addEventListener('change', function () {
     if (!activeImg || !fileInput.files || !fileInput.files[0]) return;
-    var uploadedFile = fileInput.files[0];
-    fileToDataUrl(uploadedFile, function (dataUrl) {
+    fileToDataUrl(fileInput.files[0], function (dataUrl) {
       activeImg.setAttribute('src', dataUrl);
-      activeImg.setAttribute('data-filename', uploadedFile.name);
-      fileHintName.textContent = exportFileNameFor(activeImg);
       urlInput.value = '';
       urlInput.placeholder = '(업로드된 이미지 사용 중) 새 주소를 입력하면 교체됩니다';
       saveCard();
@@ -681,21 +659,6 @@
     for (var i = 0; i < editables.length; i++) editables[i].removeAttribute('contenteditable');
     var pickers = clone.querySelectorAll('.cell-color-picker');
     for (var p = 0; p < pickers.length; p++) pickers[p].remove();
-
-    var mainImgs = clone.querySelectorAll('[data-img="main"]');
-    for (var m = 0; m < mainImgs.length; m++) {
-      if (mainImgs[m].getAttribute('src').indexOf('data:') === 0) {
-        mainImgs[m].setAttribute('src', mainImgs[m].getAttribute('data-filename') || 'main.png');
-      }
-      mainImgs[m].removeAttribute('data-filename');
-    }
-    var stickerImgs = clone.querySelectorAll('.card-sticker');
-    for (var s = 0; s < stickerImgs.length; s++) {
-      if (stickerImgs[s].getAttribute('src').indexOf('data:') === 0) {
-        stickerImgs[s].setAttribute('src', stickerImgs[s].getAttribute('data-filename') || ('sticker' + (s + 1) + '.png'));
-      }
-      stickerImgs[s].removeAttribute('data-filename');
-    }
 
     return '<div class="card-outer">\n' +
       '<style>\n' +
