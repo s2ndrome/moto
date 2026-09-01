@@ -504,7 +504,7 @@
 
   bgImageFileInput.addEventListener('change', function () {
     if (!bgImageFileInput.files || !bgImageFileInput.files[0]) return;
-    fileToDataUrl(bgImageFileInput.files[0], function (dataUrl) {
+    resizeImageFile(bgImageFileInput.files[0], 1200, function (dataUrl) {
       bgState.image = dataUrl;
       bgImageUrlInput.value = '';
       bgImageUrlInput.placeholder = '(업로드된 이미지 사용 중) 새 주소를 입력하면 교체됩니다';
@@ -518,6 +518,39 @@
     var reader = new FileReader();
     reader.onload = function () { cb(reader.result); };
     reader.readAsDataURL(file);
+  }
+
+  /* 큰 원본 사진을 그대로 넣으면 복사한 코드가 수십 MB로 불어나므로,
+     실제 표시 크기에 맞춰 축소한 뒤 데이터로 저장한다. */
+  function resizeImageFile(file, maxDim, cb) {
+    var url = URL.createObjectURL(file);
+    var img = new Image();
+    img.onload = function () {
+      var scale = Math.min(1, maxDim / Math.max(img.naturalWidth, img.naturalHeight));
+      var w = Math.max(1, Math.round(img.naturalWidth * scale));
+      var h = Math.max(1, Math.round(img.naturalHeight * scale));
+      var canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(url);
+
+      var hasAlpha = false;
+      try {
+        var data = ctx.getImageData(0, 0, w, h).data;
+        for (var i = 3; i < data.length; i += 4) {
+          if (data[i] < 200) { hasAlpha = true; break; }
+        }
+      } catch (e) {}
+
+      cb(hasAlpha ? canvas.toDataURL('image/png') : canvas.toDataURL('image/jpeg', 0.85));
+    };
+    img.onerror = function () {
+      URL.revokeObjectURL(url);
+      fileToDataUrl(file, cb);
+    };
+    img.src = url;
   }
 
   function openPanelFor(img) {
@@ -568,7 +601,8 @@
 
   fileInput.addEventListener('change', function () {
     if (!activeImg || !fileInput.files || !fileInput.files[0]) return;
-    fileToDataUrl(fileInput.files[0], function (dataUrl) {
+    var maxDim = activeImg.dataset.img === 'sticker' ? 500 : 1000;
+    resizeImageFile(fileInput.files[0], maxDim, function (dataUrl) {
       activeImg.setAttribute('src', dataUrl);
       urlInput.value = '';
       urlInput.placeholder = '(업로드된 이미지 사용 중) 새 주소를 입력하면 교체됩니다';
